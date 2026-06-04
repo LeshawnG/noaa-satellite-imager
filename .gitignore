@@ -1,0 +1,30 @@
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# ---- Virtual environments ----
+venv/
+.venv/
+env/
+
+# ---- Logs (keep the folder, ignore the files) ----
+logs/*
+!logs/.gitkeep
+*.log
+*.log.*
+
+# ---- Runtime / generated data ----
+images/
+frame_tracking.json
+update_tracking.json
+
+# ---- OS / editor cruft ----
+.DS_Store
+._*
+.idea/
+.vscode/
+
+# ---- Secrets / local env ----
+.env
+*.local

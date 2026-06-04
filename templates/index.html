@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Satellite Weather Loop - Trinidad & Tobago</title>
+    <link rel="stylesheet" href="/static/css/style.css?v={{ asset_version }}">
+    <link rel="preconnect" href="https://cdn.star.nesdis.noaa.gov">
+    <script>
+        // Set to true to re-enable verbose per-frame console logging.
+        window.APP_DEBUG = false;
+    </script>
+</head>
+<body>
+    <!-- Global loading / preload progress indicator -->
+    <div id="global-loading" class="global-loading">
+        <div class="global-loading-inner">
+            <div class="progress-bar">
+                <div id="progress-fill" class="progress-fill"></div>
+            </div>
+            <div id="progress-text" class="progress-text">0%</div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <!-- Header with controls -->
+        <div class="header">
+            <h1>Satellite Weather Loop - Trinidad & Tobago</h1>
+            <div class="controls">
+                <div class="playback-controls">
+                    <button id="play-pause-btn" class="active">
+                        <span id="play-pause-text">Pause</span>
+                    </button>
+                    <div class="progress-slider-container">
+                        <input type="range" id="progress-slider" min="1" max="100" value="1" class="progress-slider">
+                        <div class="slider-track">
+                            <div class="slider-progress" id="slider-progress"></div>
+                        </div>
+                    </div>
+                    <button id="reset-btn">Reset</button>
+                </div>
+                <div class="fps-controls">
+                    <label>FPS:</label>
+                    <div class="fps-buttons">
+                        <button class="fps-btn active" data-fps="10">10</button>
+                        <button class="fps-btn" data-fps="5">5</button>
+                        <button class="fps-btn" data-fps="1">1</button>
+                    </div>
+                    <button id="fps-auto-btn" class="fps-auto active" title="Auto-adjust FPS based on time period">Auto</button>
+                </div>
+                <div class="time-selector">
+                    <label for="time-period">Time Period:</label>
+                    <select id="time-period">
+                        <option value="2">Last 2 Hours</option>
+                        <option value="6">Last 6 Hours</option>
+                        <option value="12">Last 12 Hours</option>
+                        <option value="24" selected>Last 24 Hours</option>
+                        <option value="48">Last 48 Hours</option>
+                    </select>
+                </div>
+                <div class="zoom-selector">
+                    <label for="zoom-level">Zoom:</label>
+                    <select id="zoom-level">
+                        <option value="Zoom1" selected>Close</option>
+                        <option value="Zoom2">Medium</option>
+                        <option value="Zoom3">Wide</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main grid display -->
+        <div class="grid-container">
+            <div class="grid-cell" id="cell-top-left">
+                <div class="grid-label">GeoColor</div>
+                <div class="image-container">
+                    <img class="primary" src="" alt="GeoColor" decoding="async">
+                    <img class="secondary" src="" alt="GeoColor" decoding="async">
+                </div>
+                <div class="error-overlay">
+                    <div class="error-message">
+                        Failed to load image
+                        <button class="retry-button" onclick="retryImageLoad('top-left')">Retry</button>
+                    </div>
+                </div>
+                <div class="fullscreen-icon" onclick="enterFullscreen('top-left')">⛶</div>
+            </div>
+            
+            <div class="grid-cell" id="cell-top-right">
+                <div class="grid-label">Band 2 (Red-Visible)</div>
+                <div class="image-container">
+                    <img class="primary" src="" alt="Band 2" decoding="async">
+                    <img class="secondary" src="" alt="Band 2" decoding="async">
+                </div>
+                <div class="error-overlay">
+                    <div class="error-message">
+                        Failed to load image
+                        <button class="retry-button" onclick="retryImageLoad('top-right')">Retry</button>
+                    </div>
+                </div>
+                <div class="fullscreen-icon" onclick="enterFullscreen('top-right')">⛶</div>
+            </div>
+            
+            <div class="grid-cell" id="cell-bottom-left">
+                <div class="grid-label">Sandwich RGB</div>
+                <div class="image-container">
+                    <img class="primary" src="" alt="Sandwich RGB" decoding="async">
+                    <img class="secondary" src="" alt="Sandwich RGB" decoding="async">
+                </div>
+                <div class="error-overlay">
+                    <div class="error-message">
+                        Failed to load image
+                        <button class="retry-button" onclick="retryImageLoad('bottom-left')">Retry</button>
+                    </div>
+                </div>
+                <div class="fullscreen-icon" onclick="enterFullscreen('bottom-left')">⛶</div>
+            </div>
+            
+            <div class="grid-cell" id="cell-bottom-right">
+                <div class="grid-label">Band 13 (Longwave IR)</div>
+                <div class="image-container">
+                    <img class="primary" src="" alt="Band 13" decoding="async">
+                    <img class="secondary" src="" alt="Band 13" decoding="async">
+                </div>
+                <div class="error-overlay">
+                    <div class="error-message">
+                        Failed to load image
+                        <button class="retry-button" onclick="retryImageLoad('bottom-right')">Retry</button>
+                    </div>
+                </div>
+                <div class="fullscreen-icon" onclick="enterFullscreen('bottom-right')">⛶</div>
+            </div>
+        </div>
+        
+        <!-- Status bar -->
+        <div class="status-bar">
+            <!-- Left section: Current time, Mode, Next sunrise -->
+            <div class="status-left">
+                <div class="time-container">
+                    <span id="current-time">--:--:--</span>
+                </div>
+                <div class="mode-container">
+                    <span>Mode: <span id="mode-text">--</span></span>
+                </div>
+                <div class="sunrise-container">
+                    <span id="next-sunrise">Next Sunrise: --:--</span>
+                </div>
+            </div>
+            
+            <!-- Center: Timestamp -->
+            <div class="central-timestamp">
+                <div id="current-timestamp">Current: --:--:--</div>
+            </div>
+            
+            <!-- Right section: Frame info, Last updated (in right corner) -->
+            <div class="status-right">
+                <div class="frame-container">
+                    <span id="frame-info">Frame: 0/0</span>
+                </div>
+                <div class="update-container">
+                    <span id="update-status">Last Update: --:--</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Placeholder for fullscreen overlay -->
+    <div id="fullscreen-overlay" style="display: none;">
+        <!-- Fullscreen viewer will be inserted here -->
+    </div>
+    
+    <!-- Load JavaScript modules -->
+    <script src="/static/js/enhanced-image-manager.js?v={{ asset_version }}"></script>
+    <script src="/static/js/main.js?v={{ asset_version }}"></script>
+    <script src="/static/js/loop-controller.js?v={{ asset_version }}"></script>
+    <script src="/static/js/grid-manager.js?v={{ asset_version }}"></script>
+    <script src="/static/js/fullscreen-viewer.js?v={{ asset_version }}"></script>
+    <script src="/static/js/time-controls.js?v={{ asset_version }}"></script>
+    <script src="/static/js/progress-slider.js?v={{ asset_version }}"></script>
+    
+    <!-- Global error handler -->
+    <script>
+        window.addEventListener('error', function(e) {
+            console.error('Global error:', e.error);
+        });
+        
+        window.addEventListener('unhandledrejection', function(e) {
+            console.error('Unhandled promise rejection:', e.reason);
+        });
+        
+        // Emergency cleanup function for stuck error states
+        function emergencyCleanup() {
+            console.log('Emergency cleanup: clearing all error states');
+            
+            // Clear any stuck error overlays
+            document.querySelectorAll('.error-overlay.show').forEach(overlay => {
+                overlay.classList.remove('show');
+            });
+            
+            console.log('Emergency cleanup completed');
+        }
+        
+        // Emergency cleanup keyboard shortcut (Ctrl/Cmd + Alt + C)
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.altKey && e.key === 'c') {
+                e.preventDefault();
+                emergencyCleanup();
+                
+                // Show brief confirmation
+                const message = document.createElement('div');
+                message.textContent = 'Error states cleared';
+                message.style.cssText = `
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    background: rgba(0, 102, 204, 0.9);
+                    color: white;
+                    padding: 10px 20px;
+                    border-radius: 5px;
+                    z-index: 10000;
+                    font-size: 14px;
+                `;
+                document.body.appendChild(message);
+                setTimeout(() => document.body.removeChild(message), 2000);
+            }
+        });
+        
+        // Retry function for failed image loads
+        function retryImageLoad(cellId) {
+            if (window.app && window.app.gridManager) {
+                window.app.gridManager.retryImageLoad(cellId);
+            }
+        }
+        
+        // Global fullscreen function
+        function enterFullscreen(cellId) {
+            if (window.app && window.app.fullscreenViewer) {
+                window.app.fullscreenViewer.enter(cellId);
+            }
+        }
+        
+        // Make emergency cleanup globally available
+        window.emergencyCleanup = emergencyCleanup;
+    </script>
+</body>
+</html>
