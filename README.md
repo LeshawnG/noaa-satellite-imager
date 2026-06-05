@@ -1,4 +1,5 @@
 <div align="center">
+    <img src="static/favicons/genfavicon-512.png" alt="Satellite Weather Loop logo" width="160" height="160">
     <h1>Satellite Weather Loop — Trinidad &amp; Tobago</h1>
     <p><em>A self-hosted, always-on animated loop of GOES-19 satellite imagery over Trinidad &amp; Tobago</em></p>
 </div>

@@ -459,6 +459,13 @@ def serve_static(filename):
     """Serve static files"""
     return send_from_directory('static', filename)
 
+# Serve favicon at the site root (browsers request /favicon.ico directly)
+@app.route('/favicon.ico')
+def favicon():
+    """Serve the favicon from the site root"""
+    return send_from_directory('static/favicons', 'favicon.ico',
+                               mimetype='image/x-icon')
+
 # Health check endpoint
 @app.route('/health')
 def health_check():

@@ -1,0 +1,64 @@
+{
+    "name": "Satellite Weather Loop - Trinidad & Tobago",
+    "short_name": "Sat Weather Loop",
+    "icons": [
+        {
+            "src": "/static/favicons/genfavicon-16.png",
+            "sizes": "16x16",
+            "type": "image/png"
+        },
+        {
+            "src": "/static/favicons/genfavicon-32.png",
+            "sizes": "32x32",
+            "type": "image/png"
+        },
+        {
+            "src": "/static/favicons/genfavicon-48.png",
+            "sizes": "48x48",
+            "type": "image/png"
+        },
+        {
+            "src": "/static/favicons/genfavicon-57.png",
+            "sizes": "57x57",
+            "type": "image/png"
+        },
+        {
+            "src": "/static/favicons/genfavicon-64.png",
+            "sizes": "64x64",
+            "type": "image/png"
+        },
+        {
+            "src": "/static/favicons/genfavicon-114.png",
+            "sizes": "114x114",
+            "type": "image/png"
+        },
+        {
+            "src": "/static/favicons/genfavicon-120.png",
+            "sizes": "120x120",
+            "type": "image/png"
+        },
+        {
+            "src": "/static/favicons/genfavicon-128.png",
+            "sizes": "128x128",
+            "type": "image/png"
+        },
+        {
+            "src": "/static/favicons/genfavicon-180.png",
+            "sizes": "180x180",
+            "type": "image/png"
+        },
+        {
+            "src": "/static/favicons/genfavicon-256.png",
+            "sizes": "256x256",
+            "type": "image/png"
+        },
+        {
+            "src": "/static/favicons/genfavicon-512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "theme_color": "#000000",
+    "background_color": "#000000",
+    "display": "standalone"
+}
